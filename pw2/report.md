@@ -1,27 +1,48 @@
 Refactor everything see screenshots attached
 
+# CLD Lab 02 : APP SCALING ON IAAS
+
+Authors : Butty Vicky & Mühlemann Julien
+
+Group : L2GrT
+
+Date : 8.4.2024
 
 
 # TASK 1: CREATE A DATABASE USING THE RELATIONAL DATABASE SERVICE (RDS)
 ## credentials
-```shell
-master: neiluj
-pwd: 536966a994e04ae3a56e1744bf36690d
-endpoint RDS address: grt-muhlemann-wordpress-db.crsk2uw660uhus-east-1.rds.amazonaws.com
-load balancer: GrT-Muhlemann-LoadBalancer-1001427955.us-east-1.elb.amazonaws.com
-```
+* master: neiluj
+* pwd: 536966a994e04ae3a56e1744bf36690d
+* endpoint RDS address: grt-muhlemann-wordpress-db.crsk2uw660uhus-east-1.rds.amazonaws.com
+* load balancer: GrT-Muhlemann-LoadBalancer-1001427955.us-east-1.elb.amazonaws.com
 
 > DELIVERABLE 1: Copy the estimated monthly cost for the database and add it to your report.
 ```text
-in the N. Virginia region a db.t3.micro instance costs $0.017 per hour. Storage type gp2 costs $0.115 per GB-month.
-
+in the N. Virginia region a db.t3.micro instance costs $0.017 per hour
+Storage type gp2 costs $0.115 per GB-month.
 Cost for EC2 instance: 0.0116$ /heure
 ```
-
 > Compare the costs of your RDS instance to a continuously running EC2 instance of the same instance type to see how much AWS charges for the extra functionality.
+```text
+cost RDS: 0.017$ * 24 * 30 = 12.24$
+cost EC2: 0.0116$ * 24 * 30 = 8.352$
 
+```
 > In a two-tier architecture the web application and the database are kept separate and run on different hosts. Imagine that for the second tier instead of using RDS to store the data you would create a virtual machine in EC2 and install and run yourself a database on it. If you were the Head of IT of a medium-size business, how would you argue in favor of using a database as a service instead of running your own database on an EC2 instance? How would you argue against it?
 
+```text
+Advantages of using a RDS:
+
+* Maintenances tasks are overtaken by the provider (AWS) and allow us to focus solely on high value task.
+* Security architecture may be better implemented by the provider (AWS) than if we decided to implement averything from scratch.
+* Built-in recovery and redundancy in case of breakdown of the hardware.
+
+Disadvantages of using RDS:
+
+* Vendor lock-in: may end up dependant of a certain DbAAS (database as a service) provider.
+* Restrictions in design if we decide to make fine tweaks that are not doable within options of provider.
+* Cost may be unpredictable, if we need a swift scale up the costs could turn out to be overwhelming.
+```
 > Copy the endpoint address of the database into the report.
 
 
