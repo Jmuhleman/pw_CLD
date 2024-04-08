@@ -44,7 +44,9 @@ Disadvantages of using RDS:
 * Cost may be unpredictable, if we need a swift scale up the costs could turn out to be overwhelming.
 ```
 > Copy the endpoint address of the database into the report.
+* endpoint RDS address: grt-muhlemann-wordpress-db.crsk2uw660uhus-east-1.rds.amazonaws.com
 
+# TASK 2: CONFIGURE THE WORDPRESS MASTER INSTANCE TO USE THE RDS DATABASE
 
 > DELIVERABLE 2:
 ```bash
@@ -66,14 +68,19 @@ define( 'DB_CHARSET', 'utf8' );
 ```
 
 
+# TASK 3: CREATE A CUSTOM VIRTUAL MACHINE IMAGE
 
 > DELIVERABLE 3:
 
 ![image](ami_params.png)
 
 
+# TASK 4: CREATE A LOAD BALANCER
 
 > DELIVERABLE 4:
+
+> On your local machine resolve the DNS name of the load balancer into an IP address using the nslookup command (works on Linux, macOS and Windows). Write the DNS name and the resolved IP Address(es) into the report.
+
 ```bash
 nslookup GrT-Muhlemann-LoadBalancer-1578369946.us-east-1.elb.amazonaws.com
 Server:  internetbox.home
@@ -83,193 +90,125 @@ Non-authoritative answer:
 Name:    GrT-Muhlemann-LoadBalancer-1578369946.us-east-1.elb.amazonaws.com
 Addresses:  34.194.59.123
           34.231.114.29
+```
 
 
+> In the Apache access log identify the health check accesses from the load balancer and copy some samples into the report.
 
-
-
+```bash
 172.31.28.120 - - [21/Mar/2024:13:14:48 +0000] "GET / HTTP/1.1" 200 14905 "-" "ELB-HealthChecker/2.0"
 172.31.28.120 - - [21/Mar/2024:13:14:58 +0000] "GET / HTTP/1.1" 200 14905 "-" "ELB-HealthChecker/2.0"
 172.31.28.120 - - [21/Mar/2024:13:15:08 +0000] "GET / HTTP/1.1" 200 14905 "-" "ELB-HealthChecker/2.0"
 ```
 
 
+# TASK 5: LAUNCH A SECOND INSTANCE FROM THE CUSTOM IMAGE
+
+> DELIVERABLE 5:
+
+TODO pas sure de ça...
+![image](diagramme.png)
 
 
+> Calculate the monthly cost of this setup. You can ignore traffic costs.
 
-creation d'une image
-aws ec2 run-instances --image-id ami-0c7217cdde317cfec --count 1 --instance-type t2.micro --key-name GrX_Muhlemann --security-group-ids sg-09af380c34ef9eca1 --subnet-id subnet-0a2ab628966261f50
+```text
 
-terminaison de l'image
-aws ec2 run-instances --image-id ami-0c7217cdde317cfec --count 1 --instance-type t2.micro --key-name GrX_Muhlemann --security-group-ids sg-09af380c34ef9eca1 --subnet-id subnet-0a2ab628966261f50
+For Application Load Balancers in the AWS Region:
 
-lister les instances
-aws ec2 describe-instances --filters "Name=tag:Name,Values=GrX_Muhlemann" --query "Reservations[].Instances[].InstanceId"
-
-
+$0.0225 per Application Load Balancer-hour (or partial hour)
+$0.008 per LCU-hour (or partial hour)
+$0.005 per hour per Trust Store Associated with Application Load Balancer when using Mutual TLS (or partial hour)
 
 
-load balancer describe
- aws elbv2 describe-load-balancers | jq '.LoadBalancers[] | select(.LoadBalancerName | contains(\"GrT-Muhlemann-LoadBalancer\"))'
+So we have:
+TODO calculs...ICI 
+```
 
-sortie:
+# TASK 5B: DELETE AND RE-CREATE THE LOAD BALANCER USING THE COMMAND LINE INTERFACE
 
-{
-  "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:851725581851:loadbalancer/app/GrT-Muhlemann-LoadBalancer/93451ddd1c0fb442",
-  "DNSName": "GrT-Muhlemann-LoadBalancer-1001427955.us-east-1.elb.amazonaws.com",
-  "CanonicalHostedZoneId": "Z35SXDOTRQ7X7K",
-  "CreatedTime": "2024-03-21T13:11:11.180000+00:00",
-  "LoadBalancerName": "GrT-Muhlemann-LoadBalancer",
-  "Scheme": "internet-facing",
-  "VpcId": "vpc-049e2f8e56e0bafef",
-  "State": {
-    "Code": "active"
-  },
-  "Type": "application",
-  "AvailabilityZones": [
-    {
-      "ZoneName": "us-east-1c",
-      "SubnetId": "subnet-07f74df2f9ca79cef",
-      "LoadBalancerAddresses": []
-    },
-    {
-      "ZoneName": "us-east-1d",
-      "SubnetId": "subnet-0a2ab628966261f50",
-      "LoadBalancerAddresses": []
-    }
-  ],
-  "SecurityGroups": [
-    "sg-09af380c34ef9eca1"
-  ],
-  "IpAddressType": "ipv4"
-}
+> DELIVERABLE 5B:
 
-
-
-aws elbv2 describe-listeners --load-balancer-arn arn:aws:elasticloadbalancing:us-east-1:851725581851:loadbalancer/app/GrT-Muhlemann-LoadBalancer/93451ddd1c0fb442 | jq '.Listeners'
-
-listeners
-
-
-
-[
-  {
-    "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:851725581851:listener/app/GrT-Muhlemann-LoadBalancer/93451ddd1c0fb442/1a0555af7d2589cb",
-    "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:851725581851:loadbalancer/app/GrT-Muhlemann-LoadBalancer/93451ddd1c0fb442",
-    "Port": 80,
-    "Protocol": "HTTP",
-    "DefaultActions": [
-      {
-        "Type": "forward",
-        "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:851725581851:targetgroup/GrT-Muhlemann-TargetGroup/70f34336204362ac",
-        "ForwardConfig": {
-          "TargetGroups": [
-            {
-              "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:851725581851:targetgroup/GrT-Muhlemann-TargetGroup/70f34336204362ac",
-              "Weight": 1
-            }
-          ],
-          "TargetGroupStickinessConfig": {
-            "Enabled": false
-          }
-        }
-      }
-    ]
-  }
-]
-
-
-
-
-
+```bash
 delete load balancer 
 
-
-aws elbv2 delete-load-balancer --load-balancer-arn arn:aws:elasticloadbalancing:us-east-1:851725581851:loadbalancer/app/GrT-Muhlemann-LoadBalancer/93451ddd1c0fb442
-
+$ aws elbv2 delete-load-balancer --load-balancer-arn arn:aws:elasticloadbalancing:us-east-1:851725581851:loadbalancer/app/GrT-Muhlemann-LoadBalancer/93451ddd1c0fb442
 
 
 recreate load balancer 
 
-aws elbv2 create-load-balancer --name GrT-Muhlemann-LoadBalancer --subnets subnet-07f74df2f9ca79cef subnet-0a2ab628966261f50 --security-groups sg-09af380c34ef9eca1 --scheme internet-facing --type application --ip-address-type ipv4
+$ aws elbv2 create-load-balancer --name GrT-Muhlemann-LoadBalancer --subnets subnet-07f74df2f9ca79cef subnet-0a2ab628966261f50 --security-groups sg-09af380c34ef9eca1 --scheme internet-facing --type application --ip-address-type ipv4
 
-
-{
-    "LoadBalancers": [
-        {
-            "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:851725581851:loadbalancer/app/GrT-Muhlemann-LoadBalancer/ff2820a6c04138eb",
-            "DNSName": "GrT-Muhlemann-LoadBalancer-1578369946.us-east-1.elb.amazonaws.com",
-            "CanonicalHostedZoneId": "Z35SXDOTRQ7X7K",
-            "CreatedTime": "2024-03-30T09:52:41.920000+00:00",
-            "LoadBalancerName": "GrT-Muhlemann-LoadBalancer",
-            "Scheme": "internet-facing",
-            "VpcId": "vpc-049e2f8e56e0bafef",
-            "State": {
-                "Code": "provisioning"
-            },
-            "Type": "application",
-            "AvailabilityZones": [
-                {
-                    "ZoneName": "us-east-1c",
-                    "SubnetId": "subnet-07f74df2f9ca79cef",
-                    "LoadBalancerAddresses": []
-                },
-                {
-                    "ZoneName": "us-east-1d",
-                    "SubnetId": "subnet-0a2ab628966261f50",
-                    "LoadBalancerAddresses": []
-                }
-            ],
-            "SecurityGroups": [
-                "sg-09af380c34ef9eca1"
-            ],
-            "IpAddressType": "ipv4"
-        }
-    ]
-}
 
 Recreate listener
 
-aws elbv2 create-listener --load-balancer-arn arn:aws:elasticloadbalancing:us-east-1:851725581851:loadbalancer/app/GrT-Muhlemann-LoadBalancer/ff2820a6c04138eb --protocol HTTP --port 80 --default-action Type=forward,TargetGroupArn=arn:aws:elasticloadba
-lancing:us-east-1:851725581851:targetgroup/GrT-Muhlemann-TargetGroup/70f34336204362ac
-{
-    "Listeners": [
-        {
-            "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:851725581851:listener/app/GrT-Muhlemann-LoadBalancer/ff2820a6c04138eb/8cc8205128b7f28d",
-            "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:851725581851:loadbalancer/app/GrT-Muhlemann-LoadBalancer/ff2820a6c04138eb",
-            "Port": 80,
-            "Protocol": "HTTP",
-            "DefaultActions": [
-                {
-                    "Type": "forward",
-                    "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:851725581851:targetgroup/GrT-Muhlemann-TargetGroup/70f34336204362ac",
-                    "ForwardConfig": {
-                        "TargetGroups": [
-                            {
-                                "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:851725581851:targetgroup/GrT-Muhlemann-TargetGroup/70f34336204362ac",
-                                "Weight": 1
-                            }
-                        ],
-                        "TargetGroupStickinessConfig": {
-                            "Enabled": false
-                        }
-                    }
-                }
-            ]
-        }
-    ]
-}
+$ aws elbv2 create-listener --load-balancer-arn arn:aws:elasticloadbalancing:us-east-1:851725581851:loadbalancer/app/GrT-Muhlemann-LoadBalancer/ff2820a6c04138eb --protocol HTTP --port 80 --default-action Type=forward,TargetGroupArn=arn:aws:elasticloadbalancing:us-east-1:851725581851:targetgroup/GrT-Muhlemann-TargetGroup/70f34336204362ac
+
+```
 
 
 
+# TASK 6: TEST THE DISTRIBUTED APPLICATION
 
-echo "GET http://GrT-Muhlemann-LoadBalancer-1578369946.us-east-1.elb.amazonaws.com:80/wp-admin" | ./v attack -rate 5 -duration=60s | tee results.bin | ./v report
+> DELIVERABLE 6:
 
-cat results.bin | ./v plot -title='Results of medium load' > results-plot.html
+> Document your observations. Include reports and graphs of the load testing tool and the AWS console monitoring output.
+
+```bash
+$ echo "GET http://GrT-Muhlemann-LoadBalancer-1578369946.us-east-1.elb.amazonaws.com:80/wp-admin" | ./v attack -rate 5 -duration=60s | tee results.bin | ./v report
+
+$ cat results.bin | ./v plot -title='Results of medium load' > results-plot.html
+```
+```text
+We tested out system with a rate of 5 to 30. At 30 req/sec our system seemed already to be blowing off.
+As the plots testify below with 20 req/sec the system was still handling the load. With at 30 as the control panel showed the health checks were actually not possible any more. We can see one instance got unavailable.
+
+After the burst we happened to wait for a couple of minutes to use the machines again.
+
+```
+
+TODO details et explications à ajouter
+![image](load_balancer.png)
+
+![image](r_20.png)
+
+![image](r_30.png)
 
 
+> When you resolve the DNS name of the load balancer into IP addresses what do you see? Explain.
+
+```text
+We have not observed any IP change while testing the infrastructure.
+```
+
+```bash
+nslookup GrT-Muhlemann-LoadBalancer-1578369946.us-east-1.elb.amazonaws.com
+Server:  internetbox.home
+Address:  192.168.1.1
+
+Non-authoritative answer:
+Name:    GrT-Muhlemann-LoadBalancer-1578369946.us-east-1.elb.amazonaws.com
+Addresses:  34.194.59.123
+          34.231.114.29
+```
+
+> Did this test really test the load balancing mechanism? What are the limitations of this simple test? What would be necessary to do realistic testing?
+
+```text
+
+The procedure did not test out system comprehensively here's some ideas:
+
+* The load as been increased incrementally this does not reflect real-life scenario.
+* The test is limited at 1 minute session. We do not know how it behaves in the long run. We could have ressources exhaustion or issues that turn up after a certain amount of time.
+* The test is utterly dependant of out domestic network settings.
+
+We could consider the following ideas to make the test more realistic:
+
+* To mimic real world scenarios we need to apply stochastic variation of load and more importantly on a larger scope of time.
+* We can monitor the ressources of the machines more accurately (CPU, RAM...) rather than just observe the AWS panel.
+* We could send a couple of burst from different locations to assess how the load balancer is reacting.
+
+```
 
 
-
-
-
+TODO ADD HERE SUMMARY OF PWD's:
