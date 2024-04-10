@@ -15,7 +15,8 @@ Date : 8.4.2024
 * pwd: 536966a994e04ae3a56e1744bf36690d
 * endpoint RDS address: grt-muhlemann-wordpress-db.crsk2uw660uhus-east-1.rds.amazonaws.com
 * load balancer: GrT-Muhlemann-LoadBalancer-1001427955.us-east-1.elb.amazonaws.com
-
+* worpress user: ubuntu
+* wordpress pwd: chat
 > DELIVERABLE 1: Copy the estimated monthly cost for the database and add it to your report.
 ```text
 in the N. Virginia region a db.t3.micro instance costs $0.017 per hour
@@ -38,7 +39,7 @@ cost RDS storage 20GB * 0.115$ = 2.3$
 Advantages of using a RDS:
 
 * Maintenances tasks are overtaken by the provider (AWS) and allow us to focus solely on high value task.
-* Security architecture may be better implemented by the provider (AWS) than if we decided to implement averything from scratch.
+* Security architecture may be better implemented by the provider (AWS) than if we decided to implement everything from scratch.
 * Built-in recovery and redundancy in case of breakdown of the hardware.
 
 Disadvantages of using RDS:
@@ -110,7 +111,6 @@ Addresses:  34.194.59.123
 
 > DELIVERABLE 5:
 
-TODO pas sure de ça...
 ![image](diagramme.png)
 
 
@@ -222,6 +222,3 @@ We could consider the following ideas to make the test more realistic:
 * We could send a couple of burst from different locations to assess how the load balancer is reacting.
 
 ```
-
-
-TODO ADD HERE SUMMARY OF PWD's:
