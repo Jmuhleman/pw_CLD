@@ -17,6 +17,8 @@ Date : 8.4.2024
 * load balancer: GrT-Muhlemann-LoadBalancer-1001427955.us-east-1.elb.amazonaws.com
 * worpress user: ubuntu
 * wordpress pwd: chat
+
+
 > DELIVERABLE 1: Copy the estimated monthly cost for the database and add it to your report.
 ```text
 in the N. Virginia region a db.t3.micro instance costs $0.017 per hour
@@ -173,18 +175,20 @@ $ echo "GET http://GrT-Muhlemann-LoadBalancer-1578369946.us-east-1.elb.amazonaws
 $ cat results.bin | ./v plot -title='Results of medium load' > results-plot.html
 ```
 ```text
-We tested out system with a rate of 5 to 30. At 30 req/sec our system seemed already to be blowing off.
-As the plots testify below with 20 req/sec the system was still handling the load. With at 30 as the control panel showed the health checks were actually not possible any more. We can see one instance got unavailable.
+We tested our system with a rate of 5 to 30. At 30 req/sec our system seemed already to be blowing off.
+As the plots testify, below 20 req/sec the system was still handling the load. While at 30 as the control panel showed, the health checks were actually not possible any more. We can see one instance got unavailable.
 
 After the burst we happened to wait for a couple of minutes to use the machines again.
 
 ```
 
-TODO details et explications à ajouter
+We can see here that one of the instance is perceived as 'unhealthy' because of the massive load.
 ![image](load_balancer.png)
 
+At rate of 20 req/sec the system was able to handle, even though we have fairly long response time at the beginning.
 ![image](r_20.png)
 
+Here at 30 req / sec the system was already overwhelmed. So we got bay and large error response [code 500]. 
 ![image](r_30.png)
 
 
@@ -209,7 +213,7 @@ Addresses:  34.194.59.123
 
 ```text
 
-The procedure did not test out system comprehensively here's some ideas:
+The procedure did not test our system comprehensively here's some ideas:
 
 * The load as been increased incrementally this does not reflect real-life scenario.
 * The test is limited at 1 minute session. We do not know how it behaves in the long run. We could have ressources exhaustion or issues that turn up after a certain amount of time.
