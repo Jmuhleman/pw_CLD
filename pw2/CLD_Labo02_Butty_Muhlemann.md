@@ -1,4 +1,3 @@
-Refactor everything see screenshots attached
 
 # CLD Lab 02 : APP SCALING ON IAAS
 
@@ -126,9 +125,14 @@ cost load balancer / month
 = 16$
 
 cost EC2 
-0.64$ / month for storage
-8.468$ / month for EC2 instance
-= 9.108$
+0.08$ / GB /month
+  0.08$ *8GB =  0.64$ / month for storage
+
+0.0116$ / hour
+  0.0116$ * 24 * 30 = 8.352$ / month for EC2 instance
+
+0.64$ + 8.352$
+= 8,992$
 
 cost RDS / month
 = 14.54$
@@ -188,7 +192,7 @@ We can see here that one of the instance is perceived as 'unhealthy' because of 
 At rate of 20 req/sec the system was able to handle, even though we have fairly long response time at the beginning.
 ![image](r_20.png)
 
-Here at 30 req / sec the system was already overwhelmed. So we got bay and large error response [code 500]. 
+Here at 30 req / sec the system was already overwhelmed. So we got by and large error response [code 500]. 
 ![image](r_30.png)
 
 
