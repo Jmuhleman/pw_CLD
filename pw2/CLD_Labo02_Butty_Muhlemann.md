@@ -112,6 +112,7 @@ Addresses:  34.194.59.123
 
 > DELIVERABLE 5:
 
+
 ![image](diagramme.png)
 
 
@@ -123,7 +124,7 @@ For Application Load Balancers in the AWS Region:
 
 cost load balancer / month
 = 16$
-
+-----------------
 cost EC2 
 0.08$ / GB /month
   0.08$ *8GB =  0.64$ / month for storage
@@ -133,10 +134,10 @@ cost EC2
 
 0.64$ + 8.352$
 = 8,992$
-
+------------------
 cost RDS / month
 = 14.54$
-
+------------------
 So we have:
   2 * 9.108$
   1 * 14.54$
