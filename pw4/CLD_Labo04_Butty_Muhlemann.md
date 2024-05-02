@@ -140,7 +140,40 @@ public class DemoApplication {
 
 }
 
-
-
-
 ```
+
+
+## TASK 4: TEST THE PERFORMANCE OF DATASTORE WRITES
+
+> Deliverables:
+
+>1. For each performance test include a graph of the load testing tool and copy three screenshots of the >App Engine instances view (graph of requests by type, graph of number of instances, graph of latency) >into the report.
+
+
+
+
+>2. What average response times do you observe in the test tool for each controller?
+
+
+TODO :get rid of those commands just to recall during the lab
+
+$ echo "GET https://nifty-stage-420711.uc.r.appspot.com/dswrite?_kind=book" | ./v attack -duration=50s -rate=70 | tee results_r_70_t_50_data_store.bin | ./v report
+
+$ cat results_r_60_t_50.bin | ./v plot -title='Results of medium load' > results-plot_hello_w.html
+
+>3. Compare the response times shown by the test tool and the App Engine console. Explain the difference.
+
+
+
+>4. How much resources have you used running these tests? From the Quota Details view of the console >determine the non-zero resource quotas (Daily quota different from 0%). Explain each with a sentence. >To get a sense of everything that is measured click on Show resources not in use.
+
+
+
+
+
+>5. Let’s suppose you become suspicious that the algorithm for the automatic scaling of instances is not >working correctly. Imagine a way in which the algorithm could be broken. Which measures shown in the >console would you use to detect this failure?
+
+
+
+
+
