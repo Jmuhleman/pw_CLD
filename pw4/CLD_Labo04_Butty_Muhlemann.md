@@ -149,10 +149,47 @@ public class DemoApplication {
 
 >1. For each performance test include a graph of the load testing tool and copy three screenshots of the >App Engine instances view (graph of requests by type, graph of number of instances, graph of latency) >into the report.
 
+* At 14:10 We launch a first burst of requests on the simple controller(hello world). rate=70 duration=50''
+
+* Then at 14:20 we kicked off our second test with duration=50'' and rate=70.
+
+number of instances
+
+We observe the number of instances increasing at 14:25 at the start of our second test.
+![images](assets/instances.png)
+
+latency of requests
+
+We can see at 14:25 the time to respond increase dramatically. Probably because of the controller that needs to write data into the datastore.
+![images](assets/latency.png)
+
+requests by type
+
+We can observe that even though we performed the same duration and same frequency of requests I.E. 50'' and 70 r/sec, the app can handle more requests on the first burst (peak at 14:12).
+When the app needs to write data into the datastore it needs significantly more time to do so. Therefore we peaked at 50 req/sec for the second test.
+![images](assets/requests_type.png)
+
+Plot of the load with the hello world controller.
+
+Here we probably experience the 'cold start'. Since we had 0 instances active (see first plot at 14:10), Google had to instantiate some machines to execute our requests. Therefore we observe that descending slope form 0 to 5 seconds.
+
+![image](assets/hello_w.png)
+
+plot of the load with the dswrite controller
+
+Here we observe probably once more the cold start from 0 to 5. Conversely we notice that ou app needs significantly more time to handle the load. It needs to interact with the datastore every time.
+![image](assets/dswrite.png)
 
 
 
 >2. What average response times do you observe in the test tool for each controller?
+
+
+We can see we get an average response time of 424 ms for the simple controller. Whereas we get 8 seconds for the dswrite controller.
+![image](assets/vegets_stats.png)
+
+
+
 
 
 TODO :get rid of those commands just to recall during the lab
@@ -163,7 +200,7 @@ $ cat results_r_60_t_50.bin | ./v plot -title='Results of medium load' > results
 
 >3. Compare the response times shown by the test tool and the App Engine console. Explain the difference.
 
-
+We got 20s for the second burst with the dswrite controller.
 
 >4. How much resources have you used running these tests? From the Quota Details view of the console >determine the non-zero resource quotas (Daily quota different from 0%). Explain each with a sentence. >To get a sense of everything that is measured click on Show resources not in use.
 
