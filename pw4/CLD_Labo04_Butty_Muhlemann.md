@@ -205,32 +205,19 @@ The network latency may impair the results between both performance analysis too
 
 
 
->4. How much resources have you used running these tests? From the Quota Details view of the console >determine the non-zero resource quotas (Daily quota different from 0%). Explain each with a sentence. >To get a sense of everything that is measured click on Show resources not in use.
-
-
-
-
-
 >5. Let’s suppose you become suspicious that the algorithm for the automatic scaling of instances is not >working correctly. Imagine a way in which the algorithm could be broken. Which measures shown in the >console would you use to detect this failure?
 
 The measures we could use to suspect a failure in the algorithm could be :
 
-TODO Reformat that stuff
 
+- Instances number: Spikes or drops in these metrics can indicate potential issues with scaling.
 
-Instance Group Metrics: Navigate to the "Instance Groups" section in the Google Cloud Console and monitor metrics such as CPU utilization, memory usage, and request count for your instance group. Spikes or drops in these metrics can indicate potential issues with scaling.
+- Resource Utilization: Overall resource utilization across the project, including CPU, memory, and network usage. Anomalies in resource    utilization may indicate scaling issues or inefficiencies.
 
-Autoscaler Logs: Check the logs related to autoscaling events in the Logging section of the console. Look for any errors or warnings indicating failed scaling actions, delays, or unexpected behavior.
+- Cost Analysis: Analyze the cost breakdown for your project to identify any unexpected increases in costs associated with instances or other resources. Over-provisioning or inefficient scaling can lead to higher-than-expected costs.
 
-Autoscaler Policy: Review the autoscaling policy configured for your instance group. Ensure that the scaling triggers, such as CPU utilization or HTTP load balancing utilization, are set appropriately. You can adjust these triggers based on your application's requirements and traffic patterns.
+- Instance Count: Monitoring the number of instances running at any given time can help identify if the algorithm is
+creating too many or too few instances.
 
-Resource Utilization: Monitor overall resource utilization across your project, including CPU, memory, and network usage. Anomalies in resource utilization may indicate scaling issues or inefficiencies.
-
-Stackdriver Monitoring: Utilize Stackdriver Monitoring to create custom dashboards and charts for tracking relevant metrics, such as instance count, CPU utilization, and request latency. Set up alerting policies to notify you of abnormal behavior or threshold breaches.
-
-Cost Analysis: Analyze the cost breakdown for your project to identify any unexpected increases in costs associated with instances or other resources. Over-provisioning or inefficient scaling can lead to higher-than-expected costs.
-
-Health Checks: Ensure that health checks are configured correctly for your instance group. Monitor the health status of individual instances and check for any instances that are failing health checks, which may impact scaling decisions.
-
-
-
+- Response Time: Monitoring response times for specific tasks or operations can help identify if the algorithm is creating
+instances that are slow to respond or taking too long to complete tasks.
