@@ -1,9 +1,9 @@
 ---
 title: Cloud Computing - Lab 04
-subject: 
+subject: Develop a WEB app on a platform-as-a-service (Google App Engine)
 author: Butty Vicky & Mühlemann Julien
-group: L2GrT
-date: 18.04.2024
+group: L4GrT
+date: 15.05.2024
 ---
 
 <div style="page-break-after: always; break-after: page;"></div>
@@ -21,38 +21,48 @@ $ ./mvnw clean package --batch-mode -DskipTests -Dhttp.keepAlive=false -f=pom.xm
 
 
 
+> 6. Navigate to the Cloud Storage console. You should see two buckets, one called `staging.*`. Browse the files in the bucket. There is a file with type `application/java-archive`. This is the jar file that is the result of the build.
+
+When we looked for the `application/java-archive` type of file, we couldn't find it. The closest type of files were `application/octet-stream` type files, as shown below :
+
+![Task1_part6](./assets/Task1_part6.png)
+
+<div style="page-break-after: always; break-after: page;"></div>
+
 ## TASK 2: ADD A CONTROLLER THAT WRITES TO THE DATASTORE
-
-
 
 > DELIVERABLE
 >
 > Copy a screenshot of Datastore Studio with the written entity into the report.
 
-![image](john_steinbeck.png)
+![image](./assets/john_steinbeck.png)
 
 
 
-## TASK 3: 
+## TASK 3: DEVELOP A CONTROLLER TO WRITE ARBITRARY ENTITIES INTO THE DATASTORE
 
 > DELIVERABLE
 >
 > Copy a code listing of your app into the report.
 
+We have tested the application. We can see that the application is recording the value as given in url. More specifically, the key has been recoded as given.
+![image](./assets/given_key.png)
 
-We have tested out application. We can see the application is recording the value as given in url. More specifically the key has been recoded as given.
-![image](given_key.png)
 
-In case of missing key, we can see that the app is generating automatically an ID for us.
-![image](auto_gen_key.png)
 
-And in case of missing _kind field the error is turning up.
-![image](kind_missing.png)
+If the key is missing, we can see that the application automatically generates an ID for us.
+![image](./assets/auto_gen_key.png)
+
+
+
+And in case of missing `_kind` field, the error will show up.
+![image](./assets/kind_missing.png)
+
 
 
 Here is the code of the app:
-```java
 
+```java
 package com.example.appengine.springboot;
 
 import org.springframework.boot.SpringApplication;
@@ -136,23 +146,25 @@ public class DemoApplication {
 
         return "Entity written with kind '" + kind + "' and key '" + key.getName() + "'.";
     }
-
-
 }
-
 ```
+
 
 
 ## TASK 4: TEST THE PERFORMANCE OF DATASTORE WRITES
 
 > Deliverables:
 
->1. For each performance test include a graph of the load testing tool and copy three screenshots of the >App Engine instances view (graph of requests by type, graph of number of instances, graph of latency) >into the report.
+>1. For each performance test include a graph of the load testing tool and copy three screenshots of the App Engine instances view (graph of requests by type, graph of number of instances, graph of latency) into the report.
 
 
-* At 14:10 We launch a first burst of requests on the simple controller(hello world). duration=50'' rate=70
+* At 14:10, we launch a first burst of requests on the simple controller (hello world). 
+  duration=50'' and rate=70 
 
-* Then at 14:20 we kicked off our second test on the second controller interacting with the datastore duration=50'' and rate=70.
+* Then, at 14:20, we kicked off our second test on the second controller interacting with the datastore. duration=50'' and rate=70
+
+
+
 
 **Number of instances**
 
@@ -161,12 +173,16 @@ We notice an increase of the number of active instances at 14:10 for the first a
 We observe the number of instances increasing at 14:25 at the start of our second test.
 ![images](assets/instances.png)
 
+
+
 **Latency of requests**
 
-We don't see any significant latency worsening for the simple controller at 14:10
+We don't see any significant latency degradation for the simple controller test at 14:10.
 
-We can see at 14:25 the time to respond increase dramatically. Probably because of the controller that needs to write data into the datastore.
+At 14:25 we see that the response time increases dramatically. This is probably due to the controller writing data to the datastore.
 ![images](assets/latency.png)
+
+
 
 **Requests by type**
 
@@ -175,11 +191,15 @@ We can observe that even though we performed the same duration and same frequenc
 When the app needs to write data into the datastore it needs significantly more time to do so. Therefore we peaked at 50 req/sec for the second test.
 ![images](assets/requests_type.png)
 
+
+
 **Plot of the load with the hello world controller**
 
 Here we probably experience the 'cold start'. Since we had 0 instances active (see first plot at 14:10), Google had to instantiate some machines to execute our requests. Therefore we observe that descending slope form 0 to 5 seconds.
 
 ![image](assets/hello_w.png)
+
+<div style="page-break-after: always; break-after: page;"></div>
 
 **Plot of the load with the dswrite controller**
 
@@ -190,7 +210,6 @@ Here we observe probably once more the cold start from 0 to 5. Conversely we not
 
 >2. What average response times do you observe in the test tool for each controller?
 
-
 We can see we got an average response time of 424 ms for the simple controller. Whereas we get 8 seconds for the dswrite controller.
 ![image](assets/vegets_stats.png)
 
@@ -198,26 +217,24 @@ We can see we got an average response time of 424 ms for the simple controller. 
 
 >3. Compare the response times shown by the test tool and the App Engine console. Explain the difference.
 
-We got 20s for the second burst with the dswrite controller.
+We got 20 seconds for the second burst with the dswrite controller.
 And 20.46 seconds for the test tools for 95% of the requests.
 
-The network latency may impair the results between both performance analysis tools. Vegeta is measuring the response time from the clients perspective. That includes network latency from local network. Whereas Google metrics may measure the latency closer to the server PaaS.
+Network latency can affect the results between the two performance analysis tools. Vegeta measures response time from the client perspective. This includes network latency from the local network. While Google metrics may measure latency closer to the server PaaS.
 
 
 
->5. Let’s suppose you become suspicious that the algorithm for the automatic scaling of instances is not >working correctly. Imagine a way in which the algorithm could be broken. Which measures shown in the >console would you use to detect this failure?
+>5. Let’s suppose you become suspicious that the algorithm for the automatic scaling of instances is not working correctly. Imagine a way in which the algorithm could be broken. Which measures shown in the console would you use to detect this failure?
 
 The measures we could use to suspect a failure in the algorithm could be :
 
 
-- Instances number: Spikes or drops in these metrics can indicate potential issues with scaling.
+- Number of instances: Spikes or drops in these metrics can indicate potential scaling issues.
 
-- Resource Utilization: Overall resource utilization across the project, including CPU, memory, and network usage. Anomalies in resource    utilization may indicate scaling issues or inefficiencies.
+- Resource usage: Overall resource usage across the project, including CPU, memory, and network usage. Anomalies in resource utilization can indicate scaling issues or inefficiencies.
 
-- Cost Analysis: Analyze the cost breakdown for your project to identify any unexpected increases in costs associated with instances or other resources. Over-provisioning or inefficient scaling can lead to higher-than-expected costs.
+- Cost analysis: Analyze the cost breakdown for the project to identify unexpected increases in the cost of instances or other resources. Over-provisioning or inefficient scaling can lead to higher than expected costs.
 
-- Instance Count: Monitoring the number of instances running at any given time can help identify if the algorithm is
-creating too many or too few instances.
-
-- Response Time: Monitoring response times for specific tasks or operations can help identify if the algorithm is creating
-instances that are slow to respond or taking too long to complete tasks.
+- Instance count: Monitoring the number of instances running at any given time can help determine if the algorithm is algorithm is creating too many or too few instances.
+  
+- Response time: Monitoring response times for specific tasks or operations can help determine if the algorithm is creating instances that are slow to respond or taking too long to complete tasks.
