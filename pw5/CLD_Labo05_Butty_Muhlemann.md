@@ -258,14 +258,145 @@ Events:            <none>
 > DELIVERABLE
 > Document any difficulties you faced and how you overcame them. Copy the object descriptions into the lab report (if they are unchanged from the previous task just say so).
 
+The pods at this steps have not changed since we only added a front end service for the load balancer (frontend-svc)
+
+```text
+We had the following error after deploying the pods and services into the google cluster. That does not seem to impair usage of the application.
+```
+![image](assets/nodes_error.png)
+
 > Take a screenshot of the cluster details from the GKE console. Copy the output of the kubectl describe command to describe your load balancer once completely initialized.
 
+```text
+Here is the screenshot of the cluster details.
+```
+![image](assets/cluster_details_1.png)
+![image](assets/cluster_details_2.png)
+![image](assets/cluster_details_3.png)
+![image](assets/cluster_details_4.png)
+
+
+
+```bash
+$ kubectl describe svc/frontend-svc
+```
+```text
+Name:                     frontend-svc
+Namespace:                default
+Labels:                   component=frontend
+Annotations:              cloud.google.com/neg: {"ingress":true}
+Selector:                 app=todo,component=frontend
+Type:                     LoadBalancer
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       10.49.11.106
+IPs:                      10.49.11.106
+LoadBalancer Ingress:     34.78.156.37
+Port:                     frontend  80/TCP
+TargetPort:               8080/TCP
+NodePort:                 frontend  31352/TCP
+Endpoints:                10.0.3.9:8080
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+```
 
 
 ## TASK 3: ADD AND EXERCISE RESILIENCE
 
 > DELIVERABLE
 > Document your observations in the lab report. Document any difficulties you faced and how you overcame them. Copy the object descriptions into the lab report.
+```text
+after deleting an api pod it took 27s to turn up another one.
+```
+```bash
+kubectl get pods --watch
+NAME                        READY   STATUS    RESTARTS        AGE
+api-664fbdf7d9-mdcht        1/1     Running   2 (3m43s ago)   3m49s
+api-664fbdf7d9-xgnpv        1/1     Running   0               3m49s
+frontend-67879ff5df-kvbmw   1/1     Running   0               27s
+frontend-67879ff5df-lxqsf   1/1     Running   0               3m56s
+redis-56fb88dd96-5lt4z      1/1     Running   0               3m41s
+api-664fbdf7d9-xgnpv        1/1     Terminating   0               4m26s
+api-664fbdf7d9-jm6bh        0/1     Pending       0               0s
+api-664fbdf7d9-jm6bh        0/1     Pending       0               0s
+api-664fbdf7d9-jm6bh        0/1     ContainerCreating   0               0s
+api-664fbdf7d9-jm6bh        1/1     Running             0               27s
+api-664fbdf7d9-xgnpv        0/1     Terminating         0               4m57s
+api-664fbdf7d9-xgnpv        0/1     Terminating         0               4m57s
+api-664fbdf7d9-xgnpv        0/1     Terminating         0               4m57s
+api-664fbdf7d9-xgnpv        0/1     Terminating         0               4m57s
+```
+
+```text
+after deleting a front end pod it took 13s to restart another one
+```
+```bash
+kubectl get pods --watch
+NAME                        READY   STATUS    RESTARTS        AGE
+api-664fbdf7d9-jm6bh        1/1     Running   0               2m59s
+api-664fbdf7d9-mdcht        1/1     Running   2 (7m19s ago)   7m25s
+frontend-67879ff5df-kvbmw   1/1     Running   0               4m3s
+frontend-67879ff5df-lxqsf   1/1     Running   0               7m32s
+redis-56fb88dd96-5lt4z      1/1     Running   0               7m17s
+frontend-67879ff5df-lxqsf   1/1     Terminating   0               8m21s
+frontend-67879ff5df-s9wxm   0/1     Pending       0               0s
+frontend-67879ff5df-s9wxm   0/1     Pending       0               0s
+frontend-67879ff5df-s9wxm   0/1     ContainerCreating   0               0s
+frontend-67879ff5df-lxqsf   0/1     Terminating         0               8m22s
+frontend-67879ff5df-lxqsf   0/1     Terminating         0               8m22s
+frontend-67879ff5df-lxqsf   0/1     Terminating         0               8m22s
+frontend-67879ff5df-lxqsf   0/1     Terminating         0               8m22s
+frontend-67879ff5df-s9wxm   1/1     Running             0               13s
+```
+
+
+```bash
+We can rapidly scale out with the command:
+$ kubectl scale --replicas=3 deployment/frontend
+```
+```text
+Before the scale out we had 2 desired front end service
+```
+```bash
+NAME                                  DESIRED   CURRENT   READY   AGE
+replicaset.apps/api-664fbdf7d9        2         2         2       27s
+replicaset.apps/frontend-67879ff5df   2         2         2       32s
+replicaset.apps/redis-56fb88dd96      1         1         1       22s
+```
+
+```text
+After the scaling we get 3 desired front end pods
+```
+```bash
+NAME                                  DESIRED   CURRENT   READY   AGE
+replicaset.apps/api-664fbdf7d9        2         2         2       59s
+replicaset.apps/frontend-67879ff5df   3         3         2       64s
+replicaset.apps/redis-56fb88dd96      1         1         1       54s
+```
+
+```text
+Obviously if we kill the redis pods we lose the database of the todos tasks entered.
+```
+
+
+```text
+The autoscaling features available are:
+- HPA that is horizontal pod autoscaler automatically adjusts the number of replicas based on CPU or different metric set by the user. I.E. average CPU utilization across all pods in the deployment, requests latency, 
+
+- HVA that is vertical pod autoscaler automatically adjusts the resources requests of pods based on their resource usage patterns.
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## TASK 4: Cleanup
 
