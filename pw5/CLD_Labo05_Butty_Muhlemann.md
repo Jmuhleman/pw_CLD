@@ -356,7 +356,7 @@ We can rapidly scale out with the command:
 $ kubectl scale --replicas=3 deployment/frontend
 ```
 ```text
-Before the scale out we had 2 desired front end service
+Before we scaled out we had 2 desired front end service
 ```
 ```bash
 NAME                                  DESIRED   CURRENT   READY   AGE
@@ -382,27 +382,39 @@ Obviously if we kill the redis pods we lose the database of the todos tasks ente
 
 ```text
 The autoscaling features available are:
-- HPA that is horizontal pod autoscaler automatically adjusts the number of replicas based on CPU or different metric set by the user. I.E. average CPU utilization across all pods in the deployment, requests latency, 
+- HPA that is horizontal pod autoscaler automatically adjusts the number of replicas based on CPU or different metric set by the user. I.E. average CPU utilization across all pods in the deployment, requests latency, etc.
 
 - HVA that is vertical pod autoscaler automatically adjusts the resources requests of pods based on their resource usage patterns.
 
+- Cluster autoscaler: scales the number of nodes in a kubernetes cluster based on pending pods that can not be scheduled due to resources constraints.
+```
 
+```text
+The metrics can be: 
+* CPU usage: across pods or on each individual pod.
+```
 
+```text
+To ask kubernetes to update a component wwe use the command:
+kubectl apply -f <file_to_update_component.yaml>
 
-
-
-
-
-
-
-
+Kubernetes make uses of a roll out strategy. I.E. it automatically recognizes the changes in the manifest. If nothing changes it does nothing otherwise it apply only the updates.
+```
 
 
 ## TASK 4: Cleanup
 
+After setting a horizontal scaling with replicas form 1 to 4 and the target  use of CPU at 30%, we performed the load test on the frontend deploy of the cluster with a duration of 50' and a rate of request per second of 10.
+
+We notice the short raise in latency at the very beginning. Then, the cluster semms to absorb the load raise quite well. It then maintains an average time of ~190ms to respond.
+![image](assets/r_10.png)
 
 
 
+Then we performed a second shot with a rate of 50 per second. It is interesting to see that the average response time seems to be lower than the previous one.
+
+The cluster must have scale out to absorbe the load in such a well manner. In that scenario we get a standard deviation higher than before but we get a average response time close to ~140ms.
+![image](assets/r_50.png)
 
 
 
