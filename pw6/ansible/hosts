@@ -1,0 +1,1 @@
+gce_instance ansible_ssh_host=34.65.148.171 ansible_ssh_user=jul ansible_ssh_private_key_file= credentials/labgce-ssh-key.pub
